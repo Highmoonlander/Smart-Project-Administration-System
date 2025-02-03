@@ -1,0 +1,5 @@
+package com.pas.backend.model;
+
+public class Chat {
+
+}

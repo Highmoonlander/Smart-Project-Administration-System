@@ -1,0 +1,12 @@
+package com.pas.backend.services;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class EmailServiceImpl implements EmailService {
+    private JavaMailSender javaMailSender;
+    @Override
+    public void sendEmailWithToken(String email, String link) {
+
+    }
+}

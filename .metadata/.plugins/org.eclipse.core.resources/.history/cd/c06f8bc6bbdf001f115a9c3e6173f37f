@@ -1,0 +1,5 @@
+package com.pas.backend.Repository;
+
+public interface ChatRepository extends JpaRepository<Chat, Long>{
+
+}

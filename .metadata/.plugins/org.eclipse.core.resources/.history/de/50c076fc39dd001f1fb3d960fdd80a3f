@@ -1,0 +1,6 @@
+package com.pas.backend.services;
+
+
+public interface ProjectService {
+
+}

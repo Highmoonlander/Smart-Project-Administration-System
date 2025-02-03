@@ -1,0 +1,15 @@
+package com.pas.backend.Repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.pas.backend.model.Project;
+import com.pas.backend.model.User;
+
+public interface ProjectRepository extends JpaRepository{
+	List<User> findByOwner(User user);
+	
+	
+	List<Project> findByNameContainingAndTeamContaining(String partialName, User user);
+}
