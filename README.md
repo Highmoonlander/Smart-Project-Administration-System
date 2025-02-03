@@ -31,8 +31,9 @@ cd Smart-Project-Administration-System
 
 Ensure that you have MySQL or PostgreSQL running. Create a new database for the application.
 
-```bash
 For MySQL, run the following command:
+```bash
+CREATE DATABASE project_management;
 ```
 
 ### 3. Configure Application Properties
