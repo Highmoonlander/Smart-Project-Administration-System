@@ -1,8 +1,0 @@
-package com.pas.backend.services;
-
-import org.springframework.stereotype.Service;
-
-@Service
-public class ChatServiceImpl implements ChatSerice{
-	
-}

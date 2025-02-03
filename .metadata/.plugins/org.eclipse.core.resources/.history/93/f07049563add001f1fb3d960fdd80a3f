@@ -1,8 +1,0 @@
-package com.pas.backend.services;
-
-import com.pas.backend.model.Project;
-
-public interface ProjectService {
-
-	Project createProject(Project project, Long userId) throws Exception;
-}
