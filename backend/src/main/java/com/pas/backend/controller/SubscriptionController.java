@@ -21,8 +21,7 @@ public class SubscriptionController {
 
     @GetMapping("/user")
     public ResponseEntity<Subscription> getUserSubscriptions(
-            @RequestHeader("Authentication") String jwt
-    ) throws Exception {
+            @RequestHeader("Authorization") String jwt) throws Exception {
         User user = userService.findUserProfileByJwt(jwt);
         Subscription subscription = subscriptionService.getUserSubscription(user.getId());
         return new ResponseEntity<>(subscription, HttpStatus.OK);
@@ -30,9 +29,8 @@ public class SubscriptionController {
 
     @PatchMapping("/update")
     public ResponseEntity<Subscription> updateUserSubscription(
-            @RequestHeader("Authentication") String jwt,
-            @RequestParam PlanType planType
-            )throws Exception {
+            @RequestHeader("Authorization") String jwt,
+            @RequestParam PlanType planType) throws Exception {
         User user = userService.findUserProfileByJwt(jwt);
         Subscription subscription = subscriptionService.updateSubscription(user.getId(), planType);
         return new ResponseEntity<>(subscription, HttpStatus.OK);
