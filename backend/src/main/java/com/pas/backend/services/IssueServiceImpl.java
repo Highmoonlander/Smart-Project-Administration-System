@@ -9,6 +9,7 @@ import com.pas.backend.model.User;
 import com.pas.backend.request.IssueRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,10 +54,16 @@ public class IssueServiceImpl implements IssueService {
         return issueRepository.save(issue);
     }
 
+    // @Override
+    // public void deleteIssue(Long issueId, Long userId) throws Exception {
+    // getIssueById(issueId);
+    // issueRepository.deleteIssueById(issueId);
+    // }
     @Override
+    @Transactional
     public void deleteIssue(Long issueId, Long userId) throws Exception {
-        getIssueById(issueId);
-        issueRepository.deleteIssueById(issueId);
+        Issue issue = getIssueById(issueId);
+        issueRepository.deleteIssueById(issueId); // standard JPA method
     }
 
     @Override

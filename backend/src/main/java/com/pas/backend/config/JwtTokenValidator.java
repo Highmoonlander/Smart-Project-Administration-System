@@ -28,26 +28,25 @@ public class JwtTokenValidator extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String jwt = request.getHeader(JwtConstants.JWT_HEADER);
-		if(jwt != null) {
+		if (jwt != null) {
 			jwt = jwt.substring(7);
 			try {
-				SecretKey key = Keys.hmacShaKeyFor(JwtConstants.SECRET_KEY.getBytes()); 
-				Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJwt(jwt).getBody();
-				
+				SecretKey key = Keys.hmacShaKeyFor(JwtConstants.SECRET_KEY.getBytes());
+				Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
+
 				String email = String.valueOf(claims.get("email"));
 				String authorities = String.valueOf(claims.get("authorities"));
-				
+
 				List<GrantedAuthority> auth = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
 				Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, auth);
-				
+
 				SecurityContextHolder.getContext().setAuthentication(authentication);
-				
-				
-			}catch(Exception e) {
-				throw new BadCredentialsException("invalid token"); 
+
+			} catch (Exception e) {
+				throw new BadCredentialsException("invalid token...");
 			}
 		}
 		filterChain.doFilter(request, response);
 	}
-	
+
 }

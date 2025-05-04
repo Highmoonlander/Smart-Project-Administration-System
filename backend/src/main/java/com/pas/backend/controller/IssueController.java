@@ -36,8 +36,7 @@ public class IssueController {
     @PostMapping
     public ResponseEntity<Issue> createIssue(
             @RequestBody Issue issue,
-            @RequestHeader("Authentication") String jwt
-            ) throws Exception {
+            @RequestHeader("Authorization") String jwt) throws Exception {
         User user = userService.findUserProfileByJwt(jwt);
         IssueRequest req = new IssueRequest();
         req.setDescription(issue.getDescription());
@@ -45,17 +44,17 @@ public class IssueController {
         req.setPriority(issue.getPriority());
         req.setStatus(issue.getStatus());
         req.setDueDate(issue.getDueDate());
+        req.setProjectID(issue.getProjectID());
 
         Issue createdIssue = issueService.createIssue(req, user);
         return new ResponseEntity<>(createdIssue, HttpStatus.CREATED);
 
     }
 
-    @DeleteMapping("/{issueId")
+    @DeleteMapping("/{issueId}")
     public ResponseEntity<Issue> deleteIssue(
             @PathVariable Long issueId,
-            @RequestHeader("Authentication") String jwt
-    ) throws Exception {
+            @RequestHeader("Authorization") String jwt) throws Exception {
         User user = userService.findUserProfileByJwt(jwt);
         Issue issue = issueService.getIssueById(issueId);
         issueService.deleteIssue(issueId, user.getId());
@@ -65,8 +64,7 @@ public class IssueController {
     @PostMapping("/{issueId}/assignee/{userId}")
     public ResponseEntity<Issue> addUserToIssue(
             @PathVariable Long issueId,
-            @PathVariable Long userId
-    ) throws Exception {
+            @PathVariable Long userId) throws Exception {
         Issue issue = issueService.addUserToIssue(userId, issueId);
         return new ResponseEntity<>(issue, HttpStatus.OK);
     }
@@ -74,8 +72,7 @@ public class IssueController {
     @PutMapping("/{issueId}/status/{status}")
     public ResponseEntity<Issue> updateIssueStatus(
             @PathVariable Long issueId,
-            @PathVariable String status
-    ) throws Exception {
+            @PathVariable String status) throws Exception {
         Issue issue = issueService.updateStatus(issueId, status);
         return new ResponseEntity<>(issue, HttpStatus.OK);
     }

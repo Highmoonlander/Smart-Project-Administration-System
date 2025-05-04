@@ -6,6 +6,8 @@ import java.util.List;
 import jakarta.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -15,18 +17,19 @@ import jakarta.persistence.OneToMany;
 
 @Entity
 public class User {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
+
 	private String fullName;
 	private String email;
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private String password;
 	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL , mappedBy = "assignee")
-	private List<Issue> assignedIssues = new LinkedList<>(); 
-	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "assignee")
+	private List<Issue> assignedIssues = new LinkedList<>();
+
 	public Long getId() {
 		return id;
 	}
@@ -81,8 +84,6 @@ public class User {
 				+ ", assignedIssues=" + assignedIssues + ", projectSize=" + projectSize + "]";
 	}
 
-	
-	
 	private int projectSize;
-	
+
 }

@@ -33,7 +33,7 @@ public class CommentServiceImpl implements CommentService {
         if (user.isEmpty()) {
             throw new Exception("User not found");
         }
-        if(issue == null) {
+        if (issue == null) {
             throw new Exception("Issue not found");
         }
         Comment createdComment = new Comment();
@@ -57,7 +57,7 @@ public class CommentServiceImpl implements CommentService {
             throw new Exception("Comment not found");
         }
 
-        if(!comment.get().getUser().equals(user.get())) {
+        if (!comment.get().getUser().equals(user.get())) {
             throw new Exception("You are not the owner of this comment!");
         }
         commentRepository.delete(comment.get());
@@ -66,11 +66,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<Comment> getCommentsFromIssue(Long issueId) throws Exception {
         Issue issue = issueRepository.findById(issueId);
-        if(issue == null) {
+        if (issue == null) {
             throw new Exception("Issue not found");
         }
         List<Comment> comment = commentRepository.findCommentByIssueId(issueId);
-        if(comment.isEmpty()) {
+        if (comment.isEmpty()) {
             throw new Exception("Comment not found");
         }
         return comment;

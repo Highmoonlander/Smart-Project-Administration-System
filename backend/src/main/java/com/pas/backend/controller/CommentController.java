@@ -23,11 +23,11 @@ public class CommentController {
 
     @PostMapping()
     public ResponseEntity<Comment> createComment(
-        @RequestBody CreateCommentRequest commentRequest,
-        @RequestHeader("Authentication") String jwt
-    ) throws Exception {
+            @RequestBody CreateCommentRequest commentRequest,
+            @RequestHeader("Authorization") String jwt) throws Exception {
         User user = userService.findUserProfileByJwt(jwt);
-        Comment createdComment = commentService.createComment(user.getId(), commentRequest.getIssueId(), commentRequest.getComment());
+        Comment createdComment = commentService.createComment(user.getId(), commentRequest.getIssueId(),
+                commentRequest.getComment());
         return new ResponseEntity<>(createdComment, HttpStatus.CREATED);
 
     }
@@ -35,21 +35,18 @@ public class CommentController {
     @DeleteMapping("/{commentId}")
     public ResponseEntity<MessageResponse> deleteComment(
             @PathVariable Long commentId,
-            @RequestHeader("Authentication") String jwt
-    ) throws Exception {
+            @RequestHeader("Authorization") String jwt) throws Exception {
         User user = userService.findUserProfileByJwt(jwt);
         commentService.deleteComment(user.getId(), commentId);
         MessageResponse res = new MessageResponse("Comment deleted");
-        return new ResponseEntity<>(res,HttpStatus.OK);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @GetMapping("/{issueId}")
     public ResponseEntity<List<Comment>> getCommentsByIssueId(
-            @PathVariable Long issueId
-    ) throws Exception {
+            @PathVariable Long issueId) throws Exception {
         List<Comment> comments = commentService.getCommentsFromIssue(issueId);
-        return new ResponseEntity<>(comments,HttpStatus.OK);
+        return new ResponseEntity<>(comments, HttpStatus.OK);
     }
-
 
 }

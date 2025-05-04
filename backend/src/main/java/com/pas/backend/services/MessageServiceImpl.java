@@ -24,7 +24,6 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private ProjectService projectService;
 
-
     @Override
     public Message sendMessage(Long userId, Long projectId, String content) throws Exception {
         User sender = userRepository.findById(userId).get();
@@ -43,6 +42,6 @@ public class MessageServiceImpl implements MessageService {
     public List<Message> getMessagesByProjectId(Long projectId) throws Exception {
         Project project = projectService.getProjectById(projectId);
 
-        return messageRepository.findByChatIdOrderbyCreatedAsc(project.getChat().getId());
+        return messageRepository.findByChat_IdOrderByCreatedAtAsc(project.getChat().getId());
     }
 }
