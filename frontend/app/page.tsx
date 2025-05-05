@@ -1,16 +1,18 @@
 "use client"
+
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
-import { ThemeToggle } from "@/components/theme-toggle"
 
 export default function HomePage() {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const [redirecting, setRedirecting] = useState(false)
 
-  // Handle dashboard navigation
+  // Only redirect if user explicitly navigates to dashboard
   const handleDashboardClick = () => {
     if (user) {
       router.push("/dashboard")
@@ -32,26 +34,23 @@ export default function HomePage() {
       <header className="border-b border-slate-200 bg-white py-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <div className="container mx-auto flex items-center justify-between px-4">
           <Link href="/">
-            <h1 className="text-xl font-bold text-primary">Project Admin System</h1>
+            <h1 className="text-xl font-bold text-primary">ProjectPilot</h1>
           </Link>
-          <div className="flex items-center space-x-4">
-            <ThemeToggle />
-            <div className="space-x-2">
-              {user ? (
-                <Button onClick={() => router.push("/dashboard")}>Go to Dashboard</Button>
-              ) : (
-                <>
-                  <Link href="/login">
-                    <Button variant="outline" className="border-slate-200 dark:border-slate-700">
-                      Login
-                    </Button>
-                  </Link>
-                  <Link href="/signup">
-                    <Button>Sign Up</Button>
-                  </Link>
-                </>
-              )}
-            </div>
+          <div className="space-x-2">
+            {user ? (
+              <Button onClick={() => router.push("/dashboard")}>Go to Dashboard</Button>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="outline" className="border-slate-200 dark:border-slate-700">
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button>Sign Up</Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>

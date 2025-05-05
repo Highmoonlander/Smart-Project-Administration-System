@@ -15,13 +15,13 @@ import { ConfirmationDialog } from "@/components/ui/confirmation-dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { toast } from "@/components/ui/use-toast"
 import { AlertCircle, Trash2, Plus, Edit, Users, FileText } from "lucide-react"
+import { toast } from "@/lib/toast"
 
 interface Project {
   id: number
   name: string
-  description: string
+  description: string | null
   category: string
   tags: string[]
   owner: {
@@ -189,6 +189,8 @@ export default function ProjectDetailPage() {
   }
 
   const getStatusColor = (status: string) => {
+    if (!status) return "bg-slate-100 text-slate-800"
+
     switch (status.toLowerCase()) {
       case "completed":
         return "bg-emerald-100 text-emerald-800"
@@ -202,6 +204,8 @@ export default function ProjectDetailPage() {
   }
 
   const getPriorityColor = (priority: string) => {
+    if (!priority) return "bg-slate-100 text-slate-800"
+
     switch (priority.toLowerCase()) {
       case "high":
         return "bg-rose-100 text-rose-800"
@@ -326,10 +330,12 @@ export default function ProjectDetailPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-4">
-                  <p className="whitespace-pre-wrap text-slate-700 dark:text-slate-300">{project.description}</p>
+                  <p className="whitespace-pre-wrap text-slate-700 dark:text-slate-300">
+                    {project.description || "No description provided"}
+                  </p>
 
                   <div className="mt-6 flex flex-wrap gap-2">
-                    {project.tags.map((tag, index) => (
+                    {project.tags?.map((tag, index) => (
                       <Badge
                         key={index}
                         variant="outline"
@@ -352,7 +358,7 @@ export default function ProjectDetailPage() {
                   </CardHeader>
                   <CardContent className="pt-4">
                     <div className="space-y-4">
-                      {project.team.slice(0, 5).map((member) => (
+                      {project.team?.slice(0, 5).map((member) => (
                         <div key={member.id} className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
                             <Avatar className="h-8 w-8 border border-slate-200 dark:border-slate-700">
@@ -373,7 +379,7 @@ export default function ProjectDetailPage() {
                         </div>
                       ))}
 
-                      {project.team.length > 5 && (
+                      {project.team?.length > 5 && (
                         <div className="text-center">
                           <Button variant="link" asChild className="text-primary dark:text-primary-foreground">
                             <Link href="#team">View all team members</Link>
@@ -393,23 +399,23 @@ export default function ProjectDetailPage() {
                   </CardHeader>
                   <CardContent className="pt-4">
                     <div className="space-y-3">
-                      {project.issues.slice(0, 5).map((issue) => (
+                      {project.issues?.slice(0, 5).map((issue) => (
                         <Link key={issue.id} href={`/issues/${issue.id}`}>
                           <div className="flex cursor-pointer items-center justify-between rounded-lg border border-slate-200 p-3 transition-all duration-200 hover:bg-slate-50 hover:shadow-sm dark:border-slate-700 dark:hover:bg-slate-800">
                             <p className="font-medium text-slate-800 dark:text-slate-200">{issue.title}</p>
                             <div className="flex space-x-2">
                               <Badge className={`${getStatusColor(issue.status)} dark:bg-opacity-20`}>
-                                {issue.status}
+                                {issue.status || "Unknown"}
                               </Badge>
                               <Badge className={`${getPriorityColor(issue.priority)} dark:bg-opacity-20`}>
-                                {issue.priority}
+                                {issue.priority || "Unknown"}
                               </Badge>
                             </div>
                           </div>
                         </Link>
                       ))}
 
-                      {project.issues.length > 5 && (
+                      {project.issues?.length > 5 && (
                         <div className="text-center">
                           <Button variant="link" asChild className="text-primary dark:text-primary-foreground">
                             <Link href="#issues">View all issues</Link>
@@ -437,7 +443,7 @@ export default function ProjectDetailPage() {
                   </Link>
                 </CardHeader>
                 <CardContent className="pt-4">
-                  {project.issues.length === 0 ? (
+                  {project.issues?.length === 0 ? (
                     <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-8 text-center dark:border-slate-700 dark:bg-slate-900/50">
                       <p className="text-slate-500 dark:text-slate-400">No issues found for this project.</p>
                       <Link href={`/issues/new?projectId=${project.id}`} className="mt-4 inline-block">
@@ -450,16 +456,14 @@ export default function ProjectDetailPage() {
                     <div className="space-y-3">
                       {project.issues.map((issue) => (
                         <Link key={issue.id} href={`/issues/${issue.id}`}>
-                          <div className="flex cursor-pointer items-center justify-between rounded-lg border border-slate-200 p-4 transition-all duration-200 hover:bg-slate-50 hover:shadow-sm dark:border-slate-700 dark:hover:bg-slate-800">
+                          <div className="flex cursor-pointer items-center justify-between rounded-lg border border-slate-200 p-4 transition-all duration-200 hover:bg-slate-50 hover:shadow-sm">
                             <div>
-                              <h3 className="font-medium text-slate-800 dark:text-slate-200">{issue.title}</h3>
+                              <h3 className="font-medium text-slate-800">{issue.title}</h3>
                               <p className="text-sm text-slate-500">Issue #{issue.id}</p>
                             </div>
                             <div className="flex space-x-2">
-                              {issue.status && <Badge className={getStatusColor(issue.status)}>{issue.status}</Badge>}
-                              {issue.priority && (
-                                <Badge className={getPriorityColor(issue.priority)}>{issue.priority}</Badge>
-                              )}
+                              <Badge className={getStatusColor(issue.status)}>{issue.status || "Unknown"}</Badge>
+                              <Badge className={getPriorityColor(issue.priority)}>{issue.priority || "Unknown"}</Badge>
                             </div>
                           </div>
                         </Link>
@@ -501,7 +505,7 @@ export default function ProjectDetailPage() {
                   </div>
                 </CardHeader>
                 <CardContent className="pt-4">
-                  {project.team.length === 0 ? (
+                  {project.team?.length === 0 ? (
                     <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
                       <p className="text-slate-500">No team members found for this project.</p>
                     </div>

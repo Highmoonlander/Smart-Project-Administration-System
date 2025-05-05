@@ -62,7 +62,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <div className="flex h-full flex-col">
           <div className="flex h-16 items-center justify-between border-b border-slate-200 px-4 dark:border-slate-800">
             <Link href="/dashboard" className="flex items-center">
-              <span className="text-xl font-bold text-primary">Project Admin</span>
+              <span className="text-xl font-bold text-primary">ProjectPilot </span>
             </Link>
             <ThemeToggle />
           </div>

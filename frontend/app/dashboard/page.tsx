@@ -10,14 +10,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { CheckCircle, AlertCircle, Clock, ArrowUpCircle, BarChart3, FolderKanban } from "lucide-react"
-import { toast } from "@/components/ui/use-toast"
 import { Button } from "@/components/ui/button"
+import { toast } from "@/lib/toast"
 
 interface Issue {
   id: number
   title: string
-  status: string | null
-  priority: string | null
+  status: string
+  priority: string
   projectID: number
 }
 
@@ -52,10 +52,10 @@ export default function DashboardPage() {
     fetchIssues()
   }, [user])
 
-  const getStatusIcon = (status: string | null) => {
+  const getStatusIcon = (status: string) => {
     if (!status) return <AlertCircle className="h-5 w-5 text-slate-500 dark:text-slate-400" />
 
-    switch (status.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case "completed":
         return <CheckCircle className="h-5 w-5 text-emerald-500 dark:text-emerald-400" />
       case "in progress":
@@ -67,10 +67,10 @@ export default function DashboardPage() {
     }
   }
 
-  const getPriorityColor = (priority: string | null) => {
+  const getPriorityColor = (priority: string) => {
     if (!priority) return "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300"
 
-    switch (priority.toLowerCase()) {
+    switch (priority?.toLowerCase()) {
       case "high":
         return "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300"
       case "medium":
@@ -82,10 +82,10 @@ export default function DashboardPage() {
     }
   }
 
-  const getStatusColor = (status: string | null) => {
+  const getStatusColor = (status: string) => {
     if (!status) return "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300"
 
-    switch (status.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case "completed":
         return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300"
       case "in progress":

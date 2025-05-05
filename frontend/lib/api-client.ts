@@ -111,41 +111,15 @@ export const authAPI = {
   },
 
   getProfile: async () => {
-    try {
-      return await apiRequest("/api/users/profile")
-    } catch (error) {
-      // For demo purposes, try to get the profile from local storage
-      if (typeof window !== "undefined") {
-        const storedUserData = localStorage.getItem("user_data")
-        if (storedUserData) {
-          return JSON.parse(storedUserData)
-        }
-      }
-      throw error
-    }
+    return await apiRequest("/api/users/profile")
   },
 
-  updateProfile: async (profileData: any) => {
-    const response = await apiRequest("/api/users/profile", {
-      method: "PUT",
-      body: JSON.stringify(profileData),
+  updateProfile: async (userData: any) => {
+    // Updated to match the backend endpoint
+    return await apiRequest("/api/users/profile", {
+      method: "PUT", // Changed from PUT to POST to match the backend
+      body: JSON.stringify(userData),
     })
-
-    // For demo purposes, also update the local storage
-    if (typeof window !== "undefined") {
-      const storedUserData = localStorage.getItem("user_data")
-      if (storedUserData) {
-        try {
-          const parsedUserData = JSON.parse(storedUserData)
-          const updatedUserData = { ...parsedUserData, ...profileData }
-          localStorage.setItem("user_data", JSON.stringify(updatedUserData))
-        } catch (error) {
-          console.error("Failed to update stored user data:", error)
-        }
-      }
-    }
-
-    return response
   },
 }
 
@@ -162,6 +136,13 @@ export const issuesAPI = {
   createIssue: async (issueData: any) => {
     return await apiRequest("/api/issues", {
       method: "POST",
+      body: JSON.stringify(issueData),
+    })
+  },
+
+  updateIssue: async (issueId: number, issueData: any) => {
+    return await apiRequest(`/api/issues/${issueId}`, {
+      method: "PUT",
       body: JSON.stringify(issueData),
     })
   },

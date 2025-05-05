@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
+import Link from "next/link"
 import { useAuth } from "@/contexts/auth-context"
 import { issuesAPI, commentsAPI } from "@/lib/api-client"
 import MainLayout from "@/components/layout/main-layout"
@@ -15,10 +16,10 @@ import { Textarea } from "@/components/ui/textarea"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { AlertCircle, Calendar, Tag, User, Trash2, MessageSquare, Clock } from "lucide-react"
-import { toast } from "@/components/ui/use-toast"
+import { AlertCircle, Calendar, Tag, User, Trash2, MessageSquare, Clock, Edit } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { toast } from "@/lib/toast"
 
 interface Issue {
   id: number
@@ -245,7 +246,8 @@ export default function IssueDetailPage() {
   }
 
   const getStatusColor = (status: string) => {
-    if (!status) return "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300"
+    if (!status)
+      return "bg-slate-100 text-slate-800 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
 
     switch (status.toLowerCase()) {
       case "completed":
@@ -278,7 +280,7 @@ export default function IssueDetailPage() {
     if (!priority)
       return "bg-slate-100 text-slate-800 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
 
-    switch (priority.toLowerCase()) {
+    switch (priority?.toLowerCase()) {
       case "high":
         return "bg-rose-100 text-rose-800 hover:bg-rose-200 dark:bg-rose-900/30 dark:text-rose-300 dark:hover:bg-rose-900/50"
       case "medium":
@@ -293,7 +295,7 @@ export default function IssueDetailPage() {
   const getPriorityIcon = (priority: string) => {
     if (!priority) return <div className="mr-2 h-2 w-2 rounded-full bg-slate-500" />
 
-    switch (priority.toLowerCase()) {
+    switch (priority?.toLowerCase()) {
       case "high":
         return <div className="mr-2 h-2 w-2 rounded-full bg-rose-500" />
       case "medium":
@@ -362,13 +364,13 @@ export default function IssueDetailPage() {
                 </Badge>
               </div>
               <div className="mt-2 flex items-center space-x-2 text-slate-500">
-                <Badge className={getStatusColor(issue.status)} size="sm">
+                <Badge className={getStatusColor(issue.status)}>
                   <div className="flex items-center">
                     {getStatusIcon(issue.status)}
                     {issue.status || "Unknown"}
                   </div>
                 </Badge>
-                <Badge className={getPriorityColor(issue.priority)} size="sm">
+                <Badge className={getPriorityColor(issue.priority)}>
                   <div className="flex items-center">
                     {getPriorityIcon(issue.priority)}
                     {issue.priority || "Unknown"}
@@ -377,6 +379,12 @@ export default function IssueDetailPage() {
               </div>
             </div>
             <div className="flex space-x-2">
+              <Link href={`/issues/${id}/edit`}>
+                <Button variant="outline" className="transition-all duration-200">
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit Issue
+                </Button>
+              </Link>
               <Button
                 variant={issue.status?.toLowerCase() === "pending" ? "default" : "outline"}
                 onClick={() => handleStatusChange("PENDING")}
@@ -419,7 +427,7 @@ export default function IssueDetailPage() {
                 </CardHeader>
                 <CardContent className="pt-4">
                   <p className="whitespace-pre-wrap text-slate-700 dark:text-slate-300">
-                    {issue.description || "No description provided."}
+                    {issue.description || "No description provided"}
                   </p>
                 </CardContent>
               </Card>

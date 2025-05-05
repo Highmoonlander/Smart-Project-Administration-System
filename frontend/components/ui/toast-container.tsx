@@ -1,55 +1,38 @@
 "use client"
 
-import * as React from "react"
+import { useEffect, useState } from "react"
 import { X } from "lucide-react"
-
+import { toastManager } from "@/lib/toast"
 import { cn } from "@/lib/utils"
 
-const ToastContext = React.createContext<{
-  toasts: Toast[]
-  addToast: (toast: Omit<Toast, 'id'>) => void
-  removeToast: (id: string) => void
-}>({
-  toasts: [],
-  addToast: () => {},
-  removeToast: () => {},
-})
-
-export type Toast = {
+type Toast = {
   id: string
   title?: string
   description?: string
-  action?: React.ReactNode
   variant?: "default" | "destructive"
 }
 
-export function ToastProvider({ children }: { children: React.ReactNode }) {
-  const [toasts, setToasts] = React.useState<Toast[]>([])
-
-  const addToast = React.useCallback((toast: Omit<Toast, "id">) => {
-    const id = Math.random().toString(36).substring(2, 9)
-    setToasts((prev) => [...prev, { id, ...toast }])
-
-    // Auto-dismiss after 5 seconds
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id))
-    }, 5000)
-  }, [])
-
-  const removeToast = React.useCallback((id: string) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id))
-  }, [])
-
-  return (
-    <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
-      {children}
-      <ToastContainer />
-    </ToastContext.Provider>
-  )
-}
-
 export function ToastContainer() {
-  const { toasts, removeToast } = React.useContext(ToastContext)
+  const [toasts, setToasts] = useState<Toast[]>([])
+
+  useEffect(() => {
+    // Subscribe to toast events
+    const unsubscribe = toastManager.subscribe((toast) => {
+      setToasts((prev) => [...prev, toast])
+
+      // Auto-dismiss after 5 seconds
+      setTimeout(() => {
+        setToasts((prev) => prev.filter((t) => t.id !== toast.id))
+      }, 5000)
+    })
+
+    // Cleanup subscription
+    return unsubscribe
+  }, [])
+
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id))
+  }
 
   return (
     <div className="fixed bottom-0 right-0 z-50 m-4 flex flex-col items-end space-y-2">
@@ -80,9 +63,4 @@ export function ToastContainer() {
       ))}
     </div>
   )
-}
-
-export function toast(toast: Omit<Toast, "id">) {
-  const { addToast } = React.useContext(ToastContext)
-  addToast(toast)
 }

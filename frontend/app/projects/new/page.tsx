@@ -15,29 +15,22 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
-import { toast } from "@/components/ui/use-toast"
+import { toast } from "@/lib/toast"
 import { FolderKanban } from "lucide-react"
 
-interface ProjectFormData {
-  name: string;
-  description: string;
-  category: string;
-  tags: string;
-}
-
-export default function NewProjectPage(): React.ReactNode {
+export default function NewProjectPage() {
   const router = useRouter()
   const { user } = useAuth()
-  const [formData, setFormData] = useState<ProjectFormData>({
+  const [formData, setFormData] = useState({
     name: "",
     description: "",
     category: "",
     tags: "",
   })
-  const [error, setError] = useState<string>("")
-  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
@@ -45,14 +38,14 @@ export default function NewProjectPage(): React.ReactNode {
     }))
   }
 
-  const handleSelectChange = (name: string, value: string): void => {
+  const handleSelectChange = (name: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }))
   }
 
-  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
     setLoading(true)
@@ -76,12 +69,11 @@ export default function NewProjectPage(): React.ReactNode {
         description: "Your new project has been created successfully",
       })
       router.push(`/projects/${newProject.id}`)
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to create project"
-      setError(errorMessage)
+    } catch (err: any) {
+      setError(err.message || "Failed to create project")
       toast({
         title: "Error",
-        description: errorMessage,
+        description: err.message || "Failed to create project",
         variant: "destructive",
       })
       setLoading(false)

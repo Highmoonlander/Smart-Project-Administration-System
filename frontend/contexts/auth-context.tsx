@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
 import { authAPI } from "@/lib/api-client"
 
@@ -27,34 +27,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
-  const refreshUser = async () => {
+  const refreshUser = useCallback(async () => {
     try {
       if (authAPI.isAuthenticated()) {
-        // Try to get user data from the API
-        try {
-          const userData = await authAPI.getProfile()
-          setUser(userData)
-        } catch (error) {
-          console.error("Failed to fetch user profile from API:", error)
-
-          // Fallback: Try to get user data from localStorage
-          if (typeof window !== "undefined") {
-            const storedUserData = localStorage.getItem("user_data")
-            if (storedUserData) {
-              try {
-                const parsedUserData = JSON.parse(storedUserData)
-                setUser(parsedUserData)
-              } catch (parseError) {
-                console.error("Failed to parse stored user data:", parseError)
-                setUser(null)
-              }
-            } else {
-              setUser(null)
-            }
-          } else {
-            setUser(null)
-          }
-        }
+        const userData = await authAPI.getProfile()
+        setUser(userData)
       } else {
         setUser(null)
       }
@@ -62,7 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error("Failed to refresh user:", error)
       setUser(null)
     }
-  }
+  }, [])
 
   useEffect(() => {
     const initAuth = async () => {
@@ -72,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     initAuth()
-  }, [])
+  }, [refreshUser])
 
   const login = async (email: string, password: string) => {
     setLoading(true)

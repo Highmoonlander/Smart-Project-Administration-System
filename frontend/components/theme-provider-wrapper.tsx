@@ -13,6 +13,7 @@ export function ThemeProviderWrapper({ children }: { children: React.ReactNode }
     setMounted(true)
   }, [])
 
+  // Return children directly during SSR to avoid hydration mismatch
   if (!mounted) {
     return <>{children}</>
   }

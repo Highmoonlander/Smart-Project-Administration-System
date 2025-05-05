@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState, useEffect } from "react"
 import { useAuth } from "@/contexts/auth-context"
+import { authAPI } from "@/lib/api-client"
 import MainLayout from "@/components/layout/main-layout"
 import ProtectedRoute from "@/components/protected-route"
 import { Button } from "@/components/ui/button"
@@ -11,14 +12,26 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
+import { toast } from "@/lib/toast"
 
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth()
   const [formData, setFormData] = useState({
-    fullName: user?.fullName || "",
-    email: user?.email || "",
-    projectSize: user?.projectSize || 0,
+    fullName: "",
+    email: "",
+    projectSize: 0,
   })
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        fullName: user.fullName || "",
+        email: user.email || "",
+        projectSize: user.projectSize || 0,
+      })
+    }
+  }, [user])
+
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
   const [loading, setLoading] = useState(false)
@@ -38,49 +51,31 @@ export default function ProfilePage() {
     setLoading(true)
 
     try {
-      // In a real app, you would call an API to update the user profile
-      // For demo purposes, we'll simulate a successful update
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // Call the API to update the user profile
+      await authAPI.updateProfile({
+        fullName: formData.fullName,
+        projectSize: formData.projectSize,
+      })
 
-      // Update the user context with the new data
-      if (refreshUser) {
-        // Mock the API response for the demo
-        const updatedUser = {
-          ...user,
-          fullName: formData.fullName,
-          projectSize: formData.projectSize,
-        }
-
-        // In a real app, this would be the response from the API
-        // For now, we'll manually update the user in localStorage to simulate the API
-        if (typeof window !== "undefined") {
-          const token = localStorage.getItem("auth_token")
-          if (token) {
-            const userData = { ...updatedUser, token }
-            localStorage.setItem("user_data", JSON.stringify(userData))
-          }
-        }
-
-        await refreshUser()
-      }
+      // Refresh user data
+      await refreshUser()
 
       setSuccess("Profile updated successfully!")
+      toast({
+        title: "Success",
+        description: "Profile updated successfully!",
+      })
     } catch (err: any) {
       setError(err.message || "Failed to update profile")
+      toast({
+        title: "Error",
+        description: err.message || "Failed to update profile",
+        variant: "destructive",
+      })
     } finally {
       setLoading(false)
     }
   }
-
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        fullName: user.fullName || "",
-        email: user.email || "",
-        projectSize: user.projectSize || 0,
-      })
-    }
-  }, [user])
 
   return (
     <ProtectedRoute>
@@ -100,7 +95,7 @@ export default function ProfilePage() {
               )}
 
               {success && (
-                <Alert className="mb-4 bg-green-50 text-green-800">
+                <Alert className="mb-4 bg-green-50 text-green-800 dark:bg-green-900 dark:text-green-100">
                   <AlertDescription>{success}</AlertDescription>
                 </Alert>
               )}
@@ -126,7 +121,7 @@ export default function ProfilePage() {
                     required
                     disabled
                   />
-                  <p className="text-xs text-gray-500">Email cannot be changed</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Email cannot be changed</p>
                 </div>
 
                 <div className="space-y-2">

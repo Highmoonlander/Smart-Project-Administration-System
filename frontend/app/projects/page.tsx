@@ -11,14 +11,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog"
-import { toast } from "@/components/ui/use-toast"
 import { Plus, Trash2, Users, FileText, FolderKanban, Search, AlertCircle } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { toast } from "@/lib/toast"
 
 interface Project {
   id: number
   name: string
-  description: string
+  description: string | null
   category: string
   tags: string[]
   owner: {
@@ -182,10 +182,12 @@ export default function ProjectsPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4 p-4 dark:bg-slate-900">
-                    <p className="line-clamp-2 text-sm text-slate-700 dark:text-slate-300">{project.description}</p>
+                    <p className="line-clamp-2 text-sm text-slate-700 dark:text-slate-300">
+                      {project.description || "No description provided"}
+                    </p>
 
                     <div className="flex flex-wrap gap-2">
-                      {project.tags.map((tag, index) => (
+                      {project.tags?.map((tag, index) => (
                         <Badge
                           key={index}
                           variant="outline"
@@ -199,11 +201,11 @@ export default function ProjectsPage() {
                     <div className="flex items-center space-x-4 text-sm text-slate-600 dark:text-slate-400">
                       <div className="flex items-center">
                         <Users className="mr-1.5 h-4 w-4 text-slate-400 dark:text-slate-500" />
-                        <span>{project.team.length}</span>
+                        <span>{project.team?.length || 0}</span>
                       </div>
                       <div className="flex items-center">
                         <FileText className="mr-1.5 h-4 w-4 text-slate-400 dark:text-slate-500" />
-                        <span>{project.issues.length}</span>
+                        <span>{project.issues?.length || 0}</span>
                       </div>
                     </div>
 

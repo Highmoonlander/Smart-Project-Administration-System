@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
 import { issuesAPI } from "@/lib/api-client"
 import MainLayout from "@/components/layout/main-layout"
@@ -15,18 +15,17 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
+import { toast } from "@/lib/toast"
 
 export default function NewIssuePage() {
   const router = useRouter()
   const { user } = useAuth()
-  const searchParams = useSearchParams()
-  const projectIdParam = searchParams.get("projectId")
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     status: "PENDING",
     priority: "MEDIUM",
-    projectID: projectIdParam ? Number.parseInt(projectIdParam, 10) : 1, // Use project ID from URL if available
+    projectID: 1, // For demo purposes, we're using project ID 1
     dueDate: "",
     tags: "",
   })
@@ -66,9 +65,18 @@ export default function NewIssuePage() {
       }
 
       const newIssue = await issuesAPI.createIssue(issueData)
+      toast({
+        title: "Issue Created",
+        description: "Your new issue has been created successfully",
+      })
       router.push(`/issues/${newIssue.id}`)
     } catch (err: any) {
       setError(err.message || "Failed to create issue")
+      toast({
+        title: "Error",
+        description: err.message || "Failed to create issue",
+        variant: "destructive",
+      })
       setLoading(false)
     }
   }

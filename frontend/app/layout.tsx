@@ -4,7 +4,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { AuthProvider } from "@/contexts/auth-context"
 import { ThemeProviderWrapper } from "@/components/theme-provider-wrapper"
-import { ToastProvider } from "@/components/ui/use-toast"
+import { ToastContainer } from "@/components/ui/toast-container"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -22,9 +22,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
         <ThemeProviderWrapper>
-          <AuthProvider>
-            <ToastProvider>{children}</ToastProvider>
-          </AuthProvider>
+          <AuthProvider>{children}</AuthProvider>
+          <ToastContainer />
         </ThemeProviderWrapper>
       </body>
     </html>
